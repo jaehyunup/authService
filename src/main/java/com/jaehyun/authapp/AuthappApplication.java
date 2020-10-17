@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AuthappApplication {
 
 	public static void main(String[] args) {
+		/*TEST */
 		SpringApplication.run(AuthappApplication.class, args);
 	}
 
