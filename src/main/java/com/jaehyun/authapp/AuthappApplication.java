@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AuthappApplication {
 
 	public static void main(String[] args) {
-		/*TEST */
+		/*TEST update*/
 		SpringApplication.run(AuthappApplication.class, args);
 	}
 
