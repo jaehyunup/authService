@@ -14,7 +14,7 @@ target/
 .sts4-cache
 
 ### eclispe ###
-bin/
+.bin/*
 
 ### IntelliJ IDEA ###
 .idea
