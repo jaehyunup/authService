@@ -28,8 +28,11 @@ public class LoginService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Member member=memberMapper.findByUserName(username);
-		memberMapper.getAuthorities(username);
-		return memberMapper.findByUserName(username);
+		System.out.println(member);
+		if(member==null) {
+			throw new UsernameNotFoundException(username);
+		}
+		return member;
 	}
 
 }

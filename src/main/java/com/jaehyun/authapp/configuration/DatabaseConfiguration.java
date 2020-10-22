@@ -20,8 +20,12 @@ import com.zaxxer.hikari.HikariDataSource;
  * @fileName : DatabaseConfiguration.java
  * @author : parkjaehyun
  * @date : 2020.10.20
- * @description : 데이터베이스 설정 클래스 ============================================================================ DATE AUTHOR NOTE ---------------------------------------------------------------------------- 2020.10.20 parkjaehyun 최초생성 2020.10.20
- *              parkjaehyun sqlSessionFactory 생성 및 application Context에 등록부 추가
+ * @description : 데이터베이스 설정 클래스
+ *  ============================================================================
+ *     DATE 	 AUTHOR      NOTE 
+ *  ---------------------------------------------------------------------------- 
+ *  2020.10.20 parkjaehyun   최초생성 
+ *  2020.10.20 parkjaehyun   커넥션풀은 hikariCP를 이용, Mybatis 설정 
  */
 
 @Configuration
@@ -54,7 +58,6 @@ public class DatabaseConfiguration {
 	@Bean
 	public DataSource dataSource() throws Exception {
 		DataSource dataSource = new HikariDataSource(hikariConfig());
-		System.out.println(dataSource.toString());
 		return dataSource;
 	}
 

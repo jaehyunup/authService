@@ -23,7 +23,6 @@ class MemberMapperTest {
 	@DisplayName("맵퍼 회원이름 조회 테스트케이스")
 	void 회원이름으로_조회_잘되는지() {
 		 mapper.findByUserName("admin");
-		 
 		 Member member = mapper.findByUserName("admin");
 		 logger.info(member.toString());
 		 assertTrue("admin".equals(member.getUsername()));

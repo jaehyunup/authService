@@ -1,8 +1,10 @@
 package com.jaehyun.authapp.dto;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Getter;
@@ -19,7 +21,7 @@ import lombok.ToString;
 * DATE       	   AUTHOR  	       NOTE
 * ----------------------------------------------------------------------------
 * 2020.10.21       parkjaehyun     최초생성
-*/ 
+*/
 @ToString
 @Setter
 @Getter
@@ -28,15 +30,19 @@ public class Member implements UserDetails{
 	private String username;
 	private String password;
 	private String nickname;
+	private String authority; 
 	private boolean isAccountNonExpired;
 	private boolean isAccountNonLocked;
 	private boolean isCredentialsNonExpried;
 	private boolean isEnabled;
-	private Collection<? extends GrantedAuthority> authorities;
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return authorities;
+		ArrayList<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		authorities.add(new SimpleGrantedAuthority(authority));
+        return authorities;
 	}
+	
 	@Override
 	public String getPassword() {
 		return password;
