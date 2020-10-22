@@ -5,9 +5,9 @@
 	<select id="findByUserName" parameterType="String"
 		resultType="com.jaehyun.authapp.dto.Member">
     	 <![CDATA[
-    	select * 
-    	from member
-    	where username=#{username}
+    	select m.username,m.password,m.password, auth.authority
+		from member m join memberauthorities auth on m.username=auth.username
+    	where m.username=#{username}
     ]]>
 	</select>
 	<select id="getAuthorities" parameterType="String"
