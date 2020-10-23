@@ -3,7 +3,6 @@ package com.jaehyun.authapp.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -30,10 +29,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 * 2020.10.22 	   parkjaehyun     passwordEncoder 빈 추가(BCryptPasswordEncoder 사용)
 * 
 */ 
-@Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-	@Qualifier("loginService")
 	@Autowired
 	UserDetailsService loginService;
 	/**
@@ -61,7 +58,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		  http
+		  .csrf().disable()
           .authorizeRequests() // 해당 메소드 아래는 각 경로에 따른 권한을 지정할 수 있다.
+          	  .antMatchers("/*/**").denyAll()
               .antMatchers("/" , "/login" , "/service" , "/resources/**", "/create").permitAll() // 로그인 권한은 누구나, resources파일도 모든권한
               .antMatchers("/*.js").permitAll()
               .antMatchers("/*.css").permitAll()
@@ -72,11 +71,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
           .and()
           .formLogin()
               .loginPage("/") // 로그인페이지
-              .loginProcessingUrl("/login")// 로그인 요청 url
+              .loginProcessingUrl("/dologin")// 로그인 요청 url
               .usernameParameter("username")
               .passwordParameter("password")
               .failureUrl("/login?error=true") // 실패시
-              .defaultSuccessUrl("/loginSuccess",true) // 성공시
+              .defaultSuccessUrl("/",true) // 성공시
               .permitAll()
               .and()
           .logout()
@@ -102,7 +101,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
-
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+      auth.userDetailsService(loginService).passwordEncoder(passwordEncoder());
+    }
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
