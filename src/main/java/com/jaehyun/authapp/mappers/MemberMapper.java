@@ -1,12 +1,9 @@
-package com.jaehyun.authapp.dao;
+package com.jaehyun.authapp.mappers;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.springframework.security.core.GrantedAuthority;
 
 import com.jaehyun.authapp.dto.Member;
 
@@ -20,6 +17,7 @@ import com.jaehyun.authapp.dto.Member;
 * DATE       	   AUTHOR  	       NOTE
 * ----------------------------------------------------------------------------
 * 2020.10.21       parkjaehyun     최초생성
+* 2020.10.26       parkjaehyun     getAuthorities 메소드 리턴 타입 변경 List<String> -> List<GrantedAuthority>
 */ 
 @Mapper
 public interface MemberMapper {
@@ -50,6 +48,6 @@ public interface MemberMapper {
      * @param username
      * @return
      */
-    public List<String> getAuthorities(String username);
+    public List<GrantedAuthority> getAuthorities(String username);
 
 }

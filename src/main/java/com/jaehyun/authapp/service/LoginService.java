@@ -1,13 +1,16 @@
 package com.jaehyun.authapp.service;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.jaehyun.authapp.dao.MemberMapper;
 import com.jaehyun.authapp.dto.Member;
+import com.jaehyun.authapp.mappers.MemberMapper;
 
 /**
 * @packageName : com.jaehyun.authapp.service
@@ -37,12 +40,15 @@ public class LoginService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		System.out.println(memberMapper.toString());
-		Member member=memberMapper.findByUserName(username);
+		Member member=memberMapper.findByUserName(username);		
+		member.setAuthorities(getAuthorities(username));
 		System.out.println(member);
-		if(member==null) {
-			throw new UsernameNotFoundException(username);
-		}
 		return member;
 	}
+	
+	  public Collection<GrantedAuthority> getAuthorities(String username) {
+	    	 Collection<GrantedAuthority> authorities = memberMapper.getAuthorities(username);
+	    	 return authorities;
+	  }
 
 }

@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.jaehyun.authapp.dao.MemberMapper;
 import com.jaehyun.authapp.dto.Member;
+import com.jaehyun.authapp.mappers.MemberMapper;
 
 @SpringBootTest
 class MemberMapperTest {
@@ -27,7 +27,6 @@ class MemberMapperTest {
 		 logger.info(member.toString());
 		 assertTrue("admin".equals(member.getUsername()));
 		 assertTrue("admin".equals(member.getNickname()));
-		 assertTrue("admin".equals(member.getPassword()));
          }
 
 }

@@ -22,7 +22,7 @@ class LoginServiceAutowiredTest {
 	UserDetailsService loginService;
 	
 	@Test
-	@DisplayName("로그인서비스_Autowired_테스트")
+	@DisplayName("로그인서비스객체_DI_테스트")
 	void 로그인서비스_Autowired_DI_잘작동하는지() {
 		 
 		 UserDetails member=loginService.loadUserByUsername("admin");

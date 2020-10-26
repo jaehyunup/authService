@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jaehyun.authapp.mappers.MemberMapper">
+	<!-- 아이디 기반 회원정보검색 -->
+	<select id="findByUserName" parameterType="String" resultType="com.jaehyun.authapp.dto.Member">
+    	 <![CDATA[
+    	select * 
+		from member 
+    	where username=#{username}
+    ]]>
+	</select>
+	
+	<select id="getAuthorities" parameterType="String" resultType="org.springframework.security.core.authority.SimpleGrantedAuthority">
+		<![CDATA[
+			SELECT authority 
+			FROM memberAuthorities 
+			WHERE username = #{username}
+		]]>
+	</select>
+</mapper>
