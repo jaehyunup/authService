@@ -36,7 +36,6 @@ public class Member implements UserDetails{
 	private boolean isEnabled;
 	
 	SimpleGrantedAuthority g;
-	g.
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
