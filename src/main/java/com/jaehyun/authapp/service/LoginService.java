@@ -25,8 +25,18 @@ public class LoginService implements UserDetailsService {
 	@Autowired
 	MemberMapper memberMapper;
 	
+	/**
+	 * @methodName  : loadUserByUsername
+	 * @author      : jaehyun Park
+	 * @date        : 2020.10.21
+	 * @description : 유저이름을 기반으로 DB에서 정보조회
+	 * @param username
+	 * @return
+	 * @throws UsernameNotFoundException
+	 */
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		System.out.println(memberMapper.toString());
 		Member member=memberMapper.findByUserName(username);
 		System.out.println(member);
 		if(member==null) {

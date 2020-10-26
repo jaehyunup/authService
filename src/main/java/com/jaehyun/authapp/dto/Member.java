@@ -1,6 +1,5 @@
 package com.jaehyun.authapp.dto;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -30,16 +29,17 @@ public class Member implements UserDetails{
 	private String username;
 	private String password;
 	private String nickname;
-	private String authority; 
+    private Collection<? extends GrantedAuthority> authorities;
 	private boolean isAccountNonExpired;
 	private boolean isAccountNonLocked;
 	private boolean isCredentialsNonExpried;
 	private boolean isEnabled;
 	
+	SimpleGrantedAuthority g;
+	g.
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		ArrayList<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-		authorities.add(new SimpleGrantedAuthority(authority));
         return authorities;
 	}
 	
