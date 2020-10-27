@@ -2,10 +2,13 @@ package com.jaehyun.authapp.security;
 
 import java.io.IOException;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
@@ -19,6 +22,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 * DATE       	   AUTHOR  	       NOTE
 * ----------------------------------------------------------------------------
 * 2020.10.26       parkjaehyun     최초생성
+* 2020.10.27 	   parkjaehyun     페이지 핸들링 과정에서 세션에 유저정보담는 코드 추가
 */ 
 public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
@@ -26,17 +30,31 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
      * @methodName  : onAuthenticationSuccess
      * @author      : jaehyun Park
      * @date        : 2020.10.26
-     * @description : 인증 성공시 Security Context에 인증 정보를 저장
+     * @description : 인증성공시 수행되는 메서드
      * @param request
      * @param response
      * @param authentication
      * @throws IOException
+     * @throws ServletException 
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException {
+                                        Authentication authentication) throws IOException, ServletException {
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        response.sendRedirect("/home");
+        System.out.println("써큐리티컨텍스트:"+SecurityContextHolder.getContext().getAuthentication());
+        
+        if(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+        	System.out.println("[어쏘씨]"+authentication);
+        	super.onAuthenticationSuccess(request, response, authentication);
+        }else {
+        	System.out.println("[어쏘씨]"+authentication);
+        	getRedirectStrategy().sendRedirect(request, response, "/home");
+        }
+        
+       
+
+
+        
     }
 
 }

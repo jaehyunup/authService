@@ -31,6 +31,7 @@ public class AuthoritiesMappingTest {
      public void Mybatis_타입핸들러를_통해Auth테이블에서_권한이리스트로_가져와지는지() {
          List<GrantedAuthority> authorities = memberMapper.getAuthorities("admin");
          Iterator<GrantedAuthority> it = authorities.iterator();
+         
          while (it.hasNext()) {
               GrantedAuthority authority = it.next();
               assertThat(authorities, hasItem(new SimpleGrantedAuthority(authority.getAuthority())));

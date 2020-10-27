@@ -8,8 +8,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.jaehyun.authapp.mybatisTypeHandler.AuthorityTypeHandler;
 import com.jaehyun.authapp.security.CustomAuthenticationFilter;
 import com.jaehyun.authapp.security.CustomAuthenticationProvider;
 import com.jaehyun.authapp.security.CustomLoginSuccessHandler;
@@ -58,22 +58,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.permitAll()
 				.antMatchers("/*.css")
 					.permitAll()
-				.antMatchers("/admin")
+				.antMatchers("/admin/**")
 					.hasRole("ADMIN") // 괄호의 권한을 가진 유저만 접근가능, ROLE_가 붙어서 적용 됨. 즉, 테이블에 ROLE_권한명 으로 저장해야 함.
-				.antMatchers("/user")
+				.antMatchers("/home/**")
 					.hasRole("USER")
-				.antMatchers("/member")
-					.hasRole("MEMBER")
 				.anyRequest()
 					.authenticated()
 				.and()
 				.formLogin()
 					.loginPage("/") // 로그인페이지
 					.loginProcessingUrl("/login")// 로그인 요청 url
-					.usernameParameter("username").passwordParameter("password").failureUrl("/login?error=true")// 실패시
-					.defaultSuccessUrl("/", true) // 성공시
+					.usernameParameter("username").passwordParameter("password")// 실패시
 				.permitAll()
-				.and().logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/").and()
+				.and()
+				.addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).
+				logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/").and()
 				.exceptionHandling().accessDeniedPage("/accessDenied_page"); // 권한이 없는 대상이 접속을시도했을 때
 	}
 	
@@ -102,6 +101,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
 		customAuthenticationFilter.setFilterProcessesUrl("/login");
 		customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler());
+		customAuthenticationFilter.setAllowSessionCreation(true);
 		customAuthenticationFilter.afterPropertiesSet();
 		return customAuthenticationFilter;
 	}

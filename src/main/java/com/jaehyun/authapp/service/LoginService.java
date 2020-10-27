@@ -40,7 +40,11 @@ public class LoginService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		System.out.println(memberMapper.toString());
-		Member member=memberMapper.findByUserName(username);		
+		Member member=memberMapper.findByUserName(username);
+		if(member==null) {
+			UsernameNotFoundException ue=new UsernameNotFoundException(username+"계정을 찾을수 없습니다.");
+			throw ue;
+		}
 		member.setAuthorities(getAuthorities(username));
 		System.out.println(member);
 		return member;

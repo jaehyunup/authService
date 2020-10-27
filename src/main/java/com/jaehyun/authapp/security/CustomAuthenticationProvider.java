@@ -48,9 +48,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
         String userEmail = (String) token.getName();
 		String userPassword=(String) token.getCredentials();
-		System.out.println("프로바이더 실행 "+userEmail+" "+userPassword);
+		System.out.println(passwordEncoder.encode(userPassword));
 		UserDetails member=(Member)loginService.loadUserByUsername(userEmail);
-		System.out.println(member);
 		if (!passwordEncoder.matches(userPassword, member.getPassword())) {
             throw new BadCredentialsException(member.getUsername() + "Invalid password");
         }
