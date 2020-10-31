@@ -8,8 +8,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.jaehyun.authapp.security.CustomAuthenticationFailureHandler;
 import com.jaehyun.authapp.security.CustomAuthenticationFilter;
 import com.jaehyun.authapp.security.CustomAuthenticationProvider;
 import com.jaehyun.authapp.security.CustomLoginSuccessHandler;
@@ -51,31 +53,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests() // 해당 메소드 아래는 각 경로에 따른 권한을 지정할 수 있다.
-				.antMatchers("/", "/login", "/service", "/resources/**", "/create")
-					.permitAll() // 로그인 권한은 누구나, resources파일도 모든권한
-				.antMatchers("/*.js")
-					.permitAll()
-				.antMatchers("/*.css")
-					.permitAll()
-				.antMatchers("/admin/**")
-					.hasRole("ADMIN") // 괄호의 권한을 가진 유저만 접근가능, ROLE_가 붙어서 적용 됨. 즉, 테이블에 ROLE_권한명 으로 저장해야 함.
-				.antMatchers("/home/**")
-					.hasRole("USER")
-				.anyRequest()
-					.authenticated()
-				.and()
-				.formLogin()
-					.loginPage("/") // 로그인페이지
-					.loginProcessingUrl("/login")// 로그인 요청 url
-					.usernameParameter("username").passwordParameter("password")// 실패시
-				.permitAll()
-				.and()
-				.addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).
-				logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/").and()
-				.exceptionHandling().accessDeniedPage("/accessDenied_page"); // 권한이 없는 대상이 접속을시도했을 때
-	}
+		 http.authorizeRequests()
+         .antMatchers("/home/**").authenticated()
+         .antMatchers("/admin/**").authenticated()
+         .antMatchers("/**").permitAll();
+
+	 http.formLogin()
+	         .loginPage("/")
+	         .loginProcessingUrl("/login")
+	         .defaultSuccessUrl("/home")
+	         .permitAll();
 	
+	 http.logout()
+	         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+	         .logoutSuccessUrl("/login")
+	         .invalidateHttpSession(true);
+	
+	 http.exceptionHandling()
+	         .accessDeniedPage("/denied");
+		}
+
 	/**
 	 * @methodName : passwordEncoder
 	 * @author : jaehyun Park
@@ -84,9 +81,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 * @return
 	 */
 	@Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	public BCryptPasswordEncoder bCryptPasswordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
 	/**
 	 * @methodName : customAuthenticationFilter
@@ -101,9 +98,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
 		customAuthenticationFilter.setFilterProcessesUrl("/login");
 		customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler());
+		customAuthenticationFilter.setAuthenticationFailureHandler(curstomAuthenticationFailureHandler());
 		customAuthenticationFilter.setAllowSessionCreation(true);
 		customAuthenticationFilter.afterPropertiesSet();
 		return customAuthenticationFilter;
+	}
+
+	@Bean
+	public AuthenticationFailureHandler curstomAuthenticationFailureHandler() {
+		CustomAuthenticationFailureHandler failureHandler = new CustomAuthenticationFailureHandler();
+		failureHandler.setDefaultFailureUrl("/?error=error");
+		return failureHandler;
 	}
 
 	/**
@@ -119,9 +124,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	/**
-	 * @methodName  : customAuthenticationProvider
-	 * @author      : jaehyun Park
-	 * @date        : 2020.10.26
+	 * @methodName : customAuthenticationProvider
+	 * @author : jaehyun Park
+	 * @date : 2020.10.26
 	 * @description : 인증 프로바이더에 encoder 적용
 	 * @return
 	 */
@@ -130,5 +135,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return new CustomAuthenticationProvider(new BCryptPasswordEncoder());
 	}
 
-	
 }

@@ -5,12 +5,14 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 /**
 * @packageName : com.jaehyun.authapp.security
@@ -40,15 +42,11 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        System.out.println("써큐리티컨텍스트:"+SecurityContextHolder.getContext().getAuthentication());
         
-        if(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-        	System.out.println("[어쏘씨]"+authentication);
-        	super.onAuthenticationSuccess(request, response, authentication);
+  	  	if(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+  	  		getRedirectStrategy().sendRedirect(request, response, "admin");
         }else {
-        	System.out.println("[어쏘씨]"+authentication);
-        	getRedirectStrategy().sendRedirect(request, response, "/home");
+        	getRedirectStrategy().sendRedirect(request, response, "home");
         }
         
        

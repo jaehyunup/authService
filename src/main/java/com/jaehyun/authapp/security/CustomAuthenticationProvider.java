@@ -7,6 +7,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 */ 
 @RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
+	
 	@Autowired
 	private UserDetailsService loginService;
 	
@@ -48,12 +51,29 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
         String userEmail = (String) token.getName();
 		String userPassword=(String) token.getCredentials();
-		System.out.println(passwordEncoder.encode(userPassword));
 		UserDetails member=(Member)loginService.loadUserByUsername(userEmail);
 		if (!passwordEncoder.matches(userPassword, member.getPassword())) {
             throw new BadCredentialsException(member.getUsername() + "Invalid password");
         }
-
+		/**
+		 * 
+		 * @Issue Security Context 유실 이슈
+		 * @date : 2020.10.26
+		 * @description : 아래와같은 코드는 race condition 발생하여 SecurityContext가 Thread local에서 동작한다 하더라도
+		 *    	 		  내부적으로 구현된 Context management 작업으로 소실되는 문제를 확인하였음. AuthticationManager.class
+		 *    			  생명주기 확인하고, Context 핸들링 해야함.
+		 *  
+		   @code line:
+		   case 1
+		   ---
+		   SecurityContextHolder.getContext().setAuthentication(authentication);
+		   
+		   case 2
+		   ---
+		   SecurityContext context = SecurityContextHolder.createEmptyContext();
+		   context.setAuthentication(authentication);
+		   SecurityContextHolder.setContext(context);
+		 */ 
         return new UsernamePasswordAuthenticationToken(member.getUsername(),member.getPassword(),member.getAuthorities());
     }
 
@@ -67,8 +87,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public boolean supports(Class<?> authentication) {
-    	System.out.println("supports 메소드실행");
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 
+    
 }

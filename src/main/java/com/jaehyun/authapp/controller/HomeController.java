@@ -1,17 +1,19 @@
 package com.jaehyun.authapp.controller;
 
+import java.security.Principal;
+import java.util.Arrays;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.jaehyun.authapp.dto.Member;
+import io.jsonwebtoken.lang.Collections;
 
 /**
 * @packageName : com.jaehyun.authapp.controller
@@ -35,14 +37,25 @@ public class HomeController {
 	 * @return
 	 */
 	@GetMapping("/home")
-	public String home(HttpServletRequest request,HttpServletResponse response) {
-    	  System.out.println("컨트롤러 써큐리티컨텍스트:"+SecurityContextHolder.getContext().getAuthentication());
-    	  System.out.println("컨트롤러 써큐리티컨텍스트:"+SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication());
+	public String home(HttpSession session,@AuthenticationPrincipal Principal member) {
+		Object securityContextObject = session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+		if(securityContextObject != null){ 
+			SecurityContext securityContext = (SecurityContext)securityContextObject;
+			System.out.println(securityContext);
+			}
+	
 		return "home";
 	}
 	
 	@GetMapping("/admin")
-	public String admin(@RequestParam Map<String,Object> model) {
+	public String admin(HttpSession session,@RequestParam Map<String,Object> model) {
+		System.out.println(session);
+		System.out.println(session.getId());
+		Object securityContextObject = session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+		if(securityContextObject != null){ 
+			SecurityContext securityContext = (SecurityContext)securityContextObject;
+			System.out.println(securityContext);
+		}
 		return "admin";
 	}
 	
