@@ -1,7 +1,6 @@
 package com.jaehyun.authapp.controller;
 
 import java.security.Principal;
-import java.util.Arrays;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -12,8 +11,6 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import io.jsonwebtoken.lang.Collections;
 
 /**
 * @packageName : com.jaehyun.authapp.controller
@@ -47,15 +44,19 @@ public class HomeController {
 		return "home";
 	}
 	
+	/**
+	 * @methodName  : admin
+	 * @author      : jaehyun Park
+	 * @date        : 2020.10.27
+	 * @description : 로그인된 유저의 권한이 관리자라면 별도의 페이지로 이동
+	 * @param session
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/admin")
 	public String admin(HttpSession session,@RequestParam Map<String,Object> model) {
-		System.out.println(session);
-		System.out.println(session.getId());
-		Object securityContextObject = session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-		if(securityContextObject != null){ 
-			SecurityContext securityContext = (SecurityContext)securityContextObject;
-			System.out.println(securityContext);
-		}
+		System.out.println(session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY));
+	
 		return "admin";
 	}
 	

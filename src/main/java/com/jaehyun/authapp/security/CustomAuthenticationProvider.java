@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 * DATE       	   AUTHOR  	       NOTE
 * ----------------------------------------------------------------------------
 * 2020.10.26       parkjaehyun     최초생성
+* 
 */ 
 @RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -55,25 +56,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		if (!passwordEncoder.matches(userPassword, member.getPassword())) {
             throw new BadCredentialsException(member.getUsername() + "Invalid password");
         }
-		/**
-		 * 
-		 * @Issue Security Context 유실 이슈
-		 * @date : 2020.10.26
-		 * @description : 아래와같은 코드는 race condition 발생하여 SecurityContext가 Thread local에서 동작한다 하더라도
-		 *    	 		  내부적으로 구현된 Context management 작업으로 소실되는 문제를 확인하였음. AuthticationManager.class
-		 *    			  생명주기 확인하고, Context 핸들링 해야함.
-		 *  
-		   @code line:
-		   case 1
-		   ---
-		   SecurityContextHolder.getContext().setAuthentication(authentication);
-		   
-		   case 2
-		   ---
-		   SecurityContext context = SecurityContextHolder.createEmptyContext();
-		   context.setAuthentication(authentication);
-		   SecurityContextHolder.setContext(context);
-		 */ 
         return new UsernamePasswordAuthenticationToken(member.getUsername(),member.getPassword(),member.getAuthorities());
     }
 
