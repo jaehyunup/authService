@@ -40,7 +40,5 @@ public class CustomAuthenticationFilter  extends UsernamePasswordAuthenticationF
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getParameter("username"), request.getParameter("password")); 
         setDetails(request, token);
         return this.getAuthenticationManager().authenticate(token);
-    }
-    
-
+    } 
 }

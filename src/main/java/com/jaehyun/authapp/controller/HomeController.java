@@ -5,12 +5,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.jaehyun.authapp.dto.Member;
 
 /**
 * @packageName : com.jaehyun.authapp.controller
@@ -34,13 +38,19 @@ public class HomeController {
 	 * @return
 	 */
 	@GetMapping("/home")
-	public String home(HttpSession session,@AuthenticationPrincipal Principal member) {
+	public String home(HttpSession session,Principal principal) {
 		Object securityContextObject = session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
 		if(securityContextObject != null){ 
 			SecurityContext securityContext = (SecurityContext)securityContextObject;
-			System.out.println(securityContext);
+			//System.out.println(securityContext);
 			}
 	
+		//번째 방법 
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
+		System.out.println(auth); 
+		// 두번째 방법 
+		// 세번째 방법 
+		System.out.println(principal);
 		return "home";
 	}
 	
@@ -56,7 +66,6 @@ public class HomeController {
 	@GetMapping("/admin")
 	public String admin(HttpSession session,@RequestParam Map<String,Object> model) {
 		System.out.println(session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY));
-	
 		return "admin";
 	}
 	

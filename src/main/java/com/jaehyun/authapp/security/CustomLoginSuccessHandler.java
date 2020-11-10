@@ -44,8 +44,7 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
-    	
+                                        Authentication authentication) throws IOException, ServletException {	
     	/* 인증성공후, 세션에 Security Context를 Set.*/
     	request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,	SecurityContextHolder.getContext());
   	  	if(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
@@ -53,10 +52,6 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         }else {
         	getRedirectStrategy().sendRedirect(request, response, "home");
         }
-        
-       
-
-
         
     }
 

@@ -2,9 +2,9 @@ package com.jaehyun.authapp.controller;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,7 +31,11 @@ public class LoginController {
 	 * @return
 	 */
 	@GetMapping("/")
-	public String loginPage(@RequestParam Map<String,Object> model) {
+	public String loginPage(@RequestParam Map<String,Object> model,HttpSession session) {
+		if(session!=null) {
+			session.invalidate();
+		}
+//		System.out.println(session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY));
 		return "loginView";
 	}
 	

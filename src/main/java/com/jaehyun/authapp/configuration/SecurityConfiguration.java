@@ -2,6 +2,7 @@ package com.jaehyun.authapp.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.jaehyun.authapp.security.CustomAuthenticationFailureHandler;
@@ -25,6 +27,7 @@ import com.jaehyun.authapp.security.CustomLoginSuccessHandler;
  *              parkjaehyun configure(Http) 오버라이딩 메소드 구현 2020.10.22 parkjaehyun configure(WebSecurity) 오버라이딩 메소드 구현 2020.10.22 parkjaehyun passwordEncoder 빈 추가(BCryptPasswordEncoder 사용)
  * 
  */
+@Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
@@ -53,25 +56,31 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		 http.authorizeRequests()
-         .antMatchers("/home/**").authenticated()
-         .antMatchers("/admin/**").authenticated()
-         .antMatchers("/**").permitAll();
+    http
+		.authorizeRequests()
+		.antMatchers("/admin/**", "/admin")
+		.hasRole("ADMIN)")
+		.antMatchers("/home/**", "/home")		
+		.hasRole("USER")
+		.antMatchers("/", "/login**", "/logout**")
+		.permitAll();
+    
 
 	 http.formLogin()
 	         .loginPage("/")
 	         .loginProcessingUrl("/login")
 	         .defaultSuccessUrl("/home")
-	         .permitAll();
+	         .permitAll()
+	 		 .and()
+	 		 .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 	
-	 http.logout()
-	         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-	         .logoutSuccessUrl("/login")
-	         .invalidateHttpSession(true);
+	 http.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+	 .logoutSuccessUrl("/").deleteCookies("JSESSIONID")
+	 .invalidateHttpSession(true);
 	
 	 http.exceptionHandling()
 	         .accessDeniedPage("/denied");
-		}
+	}
 
 	/**
 	 * @methodName : passwordEncoder
